@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Azure Web App
+name: Build and Deploy Node.js app to Azure Web App - zynk-backend-app
 
 on:
   push:
@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -20,20 +21,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build the app
-        run: npm run build || echo "No build step"
-
-      # ✅ Skip tests, or dummy it out:
-      - name: Skip tests
-        run: echo "Skipping tests"
+      - name: Skip test step (no tests defined)
+        run: echo "No tests defined, skipping npm test"
 
       - name: Azure Login
         uses: azure/login@v1
         with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-        app-name: "zynk-backend-app"
-        slot-name: "production"
+          app-name: "zynk-backend-app"
+          slot-name: "production"
