@@ -4,27 +4,40 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+    permissions:
+      contents: read
+      id-token: write # Needed for OIDC Azure login
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies, build and test
+        run: |
+          npm ci
+          npm run build || echo "No build script found"
+          npm test || echo "No test script found"
 
-      - name: Run tests (optional)
-        run: npm test || echo "Tests skipped"
-
-      - name: "Deploy to Azure Web App"
-        uses: azure/webapps-deploy@v2
+      - name: Login to Azure with OIDC
+        uses: azure/login@v1
         with:
-          app-name: "zynk-backend-app"
-          slot-name: "production"
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_DDCB9574212E4388BB6E3BEA84E0AA4E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9406095D33F7458D92904A1D945B726E }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A0CDDE3DD0584E829C3ECF6CE236EE89 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: zynk-backend-dev
+          package: .
