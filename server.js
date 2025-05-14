@@ -14,7 +14,7 @@ const statusRoutes = require("./routes/statusRoutes");
 app.use("/api/status", statusRoutes);
 
 const userRoutes = require("./routes/userRoutes");
-app.use("api/user", userRoutes);
+app.use("/api/user", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("Messenger backend is running 🚀");
