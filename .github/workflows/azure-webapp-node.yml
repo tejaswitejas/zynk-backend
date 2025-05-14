@@ -1,4 +1,4 @@
-name: Build and Deploy Node.js app to Azure Web App - zynk-backend-app
+name: Build and Deploy Node.js app to Azure Web App - zynk-backend-dev
 
 on:
   push:
@@ -27,9 +27,9 @@ jobs:
         run: |
           npm ci
           npm run build || echo "No build script found"
-          npm test || echo "No test script found"
+          npm run test || echo "No test script found"
 
-      - name: Login to Azure with OIDC
+      - name: Azure Login via OIDC
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_DDCB9574212E4388BB6E3BEA84E0AA4E }}
@@ -39,5 +39,5 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: zynk-backend-dev # app name
+          app-name: zynk-backend-dev
           package: .
