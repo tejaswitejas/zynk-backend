@@ -17,6 +17,9 @@ app.use("/api/status", statusRoutes);
 const userRoutes = require("./routes/userRoutes");
 app.use("/api/user", userRoutes);
 
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
 app.get("/", (req, res) => {
   res.send("Messenger backend is running 🚀");
 });
